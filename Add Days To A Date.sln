@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Add Days To A Date", "Add Days To A Date\Add Days To A Date.csproj", "{B19F658D-0137-4445-88AD-59B9461A4C88}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B19F658D-0137-4445-88AD-59B9461A4C88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B19F658D-0137-4445-88AD-59B9461A4C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B19F658D-0137-4445-88AD-59B9461A4C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B19F658D-0137-4445-88AD-59B9461A4C88}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B621BE8D-0C5E-425F-8D3F-7C5226D2FF7E}
+	EndGlobalSection
+EndGlobal
