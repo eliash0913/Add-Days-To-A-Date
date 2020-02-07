@@ -5,8 +5,19 @@ using System.Text;
 
 namespace Add_Days_To_A_Date
 {
+    enum DAY_NAME { MON = 1, TUE, WED, THR, FRI, SAT, SUN };
     class Program
     {
+        /// <summary>
+        /// struct for DateFormat
+        /// </summary>
+        struct DateFormat
+        {
+            public int year;
+            public int month;
+            public int day;
+        }        
+        
         /// <summary>
         /// AddDays method to take year, month, day, and days, then add days to the date.
         /// </summary>
@@ -15,15 +26,15 @@ namespace Add_Days_To_A_Date
         /// <param name="day"></param>
         /// <param name="days"></param>
         /// <returns></returns>
-        private string AddDays(int year, int month, int day, int days)
+        private string AddDays(DateFormat df, int days)
         {
-            days += ToDays(year, month, day); //adding julian days converted by ToDay method and add days to be added
-            while (GetDays(year) < days) //it will iterate until the days are within the year
+            days += ToDays(df.year, df.month, df.day); //adding julian days converted by ToDay method and add days to be added
+            while (GetDays(df.year) < days) //it will iterate until the days are within the year
             {
-                days -= GetDays(year); 
-                year++;
+                days -= GetDays(df.year);
+                df.year++;
             }
-            return ToDate(year, days); //return julian day format to string
+            return ToDate(df.year, days); //return julian day format to string
         }
    
         /// <summary>
@@ -33,7 +44,7 @@ namespace Add_Days_To_A_Date
         /// <returns></returns>
         private int GetDays(int year)
         {
-            return (year % 4 == 0) ? 366 : 365; //if it is a leap year, return 366 days. otherwise, 365 days
+            return IsLeapYear(year) ? 366 : 365; //if it is a leap year, return 366 days. otherwise, 365 days
         }
 
         /// <summary>
@@ -59,9 +70,10 @@ namespace Add_Days_To_A_Date
         /// <param name="year"></param>
         /// <param name="days"></param>
         /// <returns></returns>
-        private string ToDate(int year, int days)
+        private string ToDate(int year, int jDays)
         {
             int month = 1;
+            int days = jDays;
             while (GetMonthDay(year, month) < days)
             {
                 days -= GetMonthDay(year, month);
@@ -69,7 +81,7 @@ namespace Add_Days_To_A_Date
                 if(month==13) //If month is 13, then it starts over from Jan.
                     month=1;
             }
-            string sDate = year.ToString() + "-" + month.ToString() + "-" + days.ToString();
+            string sDate = year.ToString() + "-" + month.ToString() + "-" + days.ToString() + "-" + GetDayName(year, jDays);
             return sDate;
         }
 
@@ -110,19 +122,171 @@ namespace Add_Days_To_A_Date
                 return 30;
             }
         }
+
+        /// <summary>
+        /// isLeapYear method to take year and return true if it is leap year
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        private bool IsLeapYear(int year)
+        {
+            if (year % 400 == 0)
+                return true;
+            else if (year % 100 == 0)
+                return false;
+            else if (year % 4 == 0)
+                return true;
+            else 
+                return false;
+        }
+
+        /// <summary>
+        /// take year to get shifted day. this is a helper for get day name.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        private int GetDayShift(int year)
+        {
+            int shift = 0;
+            for(int i = 1; i < year; i++)
+            {
+                shift += GetDays(i) % 7;
+            }
+            return (shift % 7);
+        }
+
+        /// <summary>
+        /// Take year and julian day, and return day.
+        /// </summary>
+        /// <param name="jDay"></param>
+        /// <returns></returns>
+        private string GetDayName(int year, int jDay)
+        {
+            int day = GetDayShift(year) + jDay;
+            switch ((DAY_NAME)(day % 7))
+            {
+                case DAY_NAME.MON:
+                    return "Monday";
+
+                case DAY_NAME.TUE:
+                    return "Tuesday";
+
+                case DAY_NAME.WED:
+                    return "Wednesday";
+
+                case DAY_NAME.THR:
+                    return "Thursday";
+
+                case DAY_NAME.FRI:
+                    return "Friday";
+
+                case DAY_NAME.SAT:
+                    return "Satursday";
+
+                case DAY_NAME.SUN:
+                    return "Sunday";
+            }
+            return null;
+        }
         
+        /// <summary>
+        /// GetMonth to convert from integer to string month.
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        private string GetMonth(int i)
+        {
+            switch (i)
+            {
+                case 1:
+                    return "January";
+
+                case 2:
+                    return "February";
+
+                case 3:
+                    return "March";
+
+                case 4:
+                    return "April";
+
+                case 5:
+                    return "May";
+
+                case 6:
+                    return "June";
+
+                case 7:
+                    return "July";
+
+                case 8:
+                    return "August";
+
+                case 9:
+                    return "September";
+
+                case 10:
+                    return "October";
+
+                case 11:
+                    return "November";
+
+                case 12:
+                    return "December";
+            }
+            return "invalid";
+        }
+        ///
+        /// <summary>
+        /// Start method to take and invoke adding method to get the result.
+        /// </summary>
+        private void Start()
+        {
+            DateFormat df = new DateFormat();
+            int days = 0;
+            string date = "";
+            try
+            {
+                Console.WriteLine("Please Enter Date (YYYY-MM-DD):");
+                date = Console.ReadLine();
+                string[] dateArray = date.Split('-');
+                df.year = Int32.Parse(dateArray[0]);
+                df.month = Int32.Parse(dateArray[1]);
+                if (df.month > 12 || df.month < 0)
+                {
+                    throw new DateFormatException(df.month + " is not valid month. Please enter 1 - 12 for month.");
+                }
+                df.day = Int32.Parse(dateArray[2]);
+                if (df.day > GetMonthDay(df.year, df.month))
+                {
+                    throw new DateFormatException(GetMonth(df.month) + " has only " + GetMonthDay(df.year, df.month) + " days.");
+                }
+                Console.WriteLine("Please Enter Days to Add");
+                days = Int32.Parse(Console.ReadLine());
+                Console.WriteLine("Date {0} days after {1} : {2}", days, date, AddDays(df, days));
+            }
+            catch (DateFormatException dfe)
+            {
+                Console.WriteLine(dfe.Message);
+            }
+            catch(IndexOutOfRangeException)
+            {
+                Console.WriteLine("Please check date foramt. It must be yyyy-mm-dd");
+            }
+            catch(OverflowException)
+            {
+                Console.WriteLine("The number you put is too big to take.");
+            }
+            catch(FormatException)
+            {
+                Console.WriteLine("Please enter numeric values");
+            }
+        }
+
         static void Main(string[] args)
         {
             Program p = new Program();
-            Console.WriteLine("Please Enter Year");
-            int year = Int32.Parse(Console.ReadLine());
-            Console.WriteLine("Please Enter Month");
-            int month = Int32.Parse(Console.ReadLine());
-            Console.WriteLine("Please Enter Date");
-            int day = Int32.Parse(Console.ReadLine());
-            Console.WriteLine("Please Enter Days to Add");
-            int days = Int32.Parse(Console.ReadLine());
-            Console.WriteLine(p.AddDays(year, month, day, days));
+            p.Start();
         }
     }
 }
